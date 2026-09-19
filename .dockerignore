@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+.venv
+__pycache__
+*.pyc
+.streamlit
+comparison_result.json
+submission.json
+run_cache.json
+review_queue.json
+classification_errors.json
+.clearport-tools
