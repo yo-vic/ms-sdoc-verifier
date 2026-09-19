@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "Node16", "moduleResolution": "Node16",
+    "outDir": ".clearport-tools", "rootDir": ".", "strict": true,
+    "esModuleInterop": true, "skipLibCheck": true, "types": ["node"]
+  },
+  "include": ["lib/ingest/**/*.ts", "lib/supabase/admin.ts", "scripts/seed.ts", "tests/ingest.test.ts"]
+}
