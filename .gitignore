@@ -1,5 +1,16 @@
 .venv/
 .env
 .streamlit/secrets.toml
-__pycache__/comparison_result.json
+__pycache__/
+comparison_result.json
 submission.json
+node_modules/
+.next/
+.vercel/
+.env.*
+!.env.example
+*.tsbuildinfo
+run_cache.json
+review_queue.json
+classification_errors.json
+.clearport-tools/
