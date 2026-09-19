@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import streamlit as st
 
-from verifier import extract_pair
+from comparator import extract_pair
 
 st.set_page_config(page_title="Shipping Document Verifier", layout="wide")
 
