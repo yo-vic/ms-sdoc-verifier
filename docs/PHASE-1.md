@@ -22,7 +22,7 @@ Open http://localhost:3000. The Phase 1 page is a foundation screen, not a compl
 
 1. Create a project in a **Free** Supabase organization. Name it ClearPort. Keep the generated database password private. Do not upgrade or activate paid add-ons.
 2. In SQL Editor, run `supabase/migrations/202609190001_clearport.sql` on the new project once. It creates five tables, a private document bucket, and Realtime publication membership for emails and comparisons.
-3. Copy `.env.example` to `.env.local`. Set the project URL, publishable key, and server-only service-role key from the project dashboard. Do not share keys in chat. The service-role key must never have a `NEXT_PUBLIC_` prefix.
+3. Copy `.env.example` to `.env`. Set the project URL, publishable key, and server-only service-role key from the project dashboard. Do not share keys in chat. The service-role key must never have a `NEXT_PUBLIC_` prefix.
 4. Run `npm run seed`. This upserts records, uploads bytes, then verifies email IDs/counts, all attachment references, and the SHA-256 of every stored file. Repeating seed does not duplicate email or attachment rows. Each import writes an audit event.
 5. Confirm the command exits successfully, then run the SQL checks below.
 

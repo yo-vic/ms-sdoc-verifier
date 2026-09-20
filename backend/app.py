@@ -8,6 +8,12 @@ from loader import Inbox
 from classifier import classify_all
 from pipeline import process_comparison, DEFAULT_RESULT
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
+load_dotenv(".env") # Reads .env if present
+
 app = FastAPI(title="Shipping Document Verifier API")
 
 app.add_middleware(

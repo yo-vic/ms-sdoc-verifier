@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     # Load local backend secrets and configuration
     env_file:
-      - .env.local
+      - .env
     volumes:
       # Mount local inbox & attachments so updates reflect immediately
       - ./inbox:/app/inbox

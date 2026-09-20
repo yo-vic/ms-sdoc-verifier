@@ -4,7 +4,6 @@ import { DatasetInbox, ingestDataset, type IngestStore } from "../lib/ingest/dat
 import { SupabaseIngestStore, verifySupabaseSeed } from "../lib/ingest/supabase-store";
 import { createAdminClient } from "../lib/supabase/admin";
 
-config({ path: ".env.local", quiet: true });
 config({ path: ".env", quiet: true });
 
 const { values } = parseArgs({ options: {
