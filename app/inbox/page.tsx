@@ -1,12 +1,8 @@
-export default function InboxPage() {
-  return <main className="mx-auto max-w-3xl px-8 py-20">
-    <p className="text-sm font-bold tracking-widest text-[#0F6B66]">CLEARPORT</p>
-    <h1 className="mt-5 text-4xl font-semibold tracking-tight">Shipping documents, checked with evidence.</h1>
-    <section className="mt-10 rounded-2xl border border-slate-200 bg-white p-8">
-      <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">Phase 1 · Data foundation</p>
-      <h2 className="mt-3 text-xl font-semibold">Connect your dataset</h2>
-      <p className="mt-3 leading-7 text-slate-600">The migration and ingestion tools are ready for verification. The interactive inbox arrives in the next phases.</p>
-      <p className="mt-4 text-sm text-slate-500">No emails are shown as processed until the pipeline actually runs.</p>
-    </section>
-  </main>;
+import { inboxRows } from "@/lib/server-data";
+import { Badge } from "@/components/status";
+import Link from "next/link";
+export const dynamic = "force-dynamic";
+export default async function InboxPage() {
+  const rows = await inboxRows();
+  return <section className="p-8"><div className="flex items-end justify-between"><div><p className="text-sm font-semibold text-[#0f6b66]">INBOX</p><h1 className="mt-1 text-3xl font-semibold tracking-tight">Document verification queue</h1><p className="mt-2 text-slate-500">Every decision is backed by the original document evidence.</p></div><div className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm"><b>{rows.length}</b> emails processed</div></div><div className="mt-7 flex gap-2"><span className="rounded-lg bg-[#0f6b66] px-3 py-2 text-sm font-medium text-white">All emails</span><span className="rounded-lg bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">Highlights</span><span className="rounded-lg bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">Live only</span></div><div className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"><table className="w-full text-left text-sm"><thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500"><tr><th className="px-5 py-4">Sender</th><th className="px-5 py-4">Subject</th><th className="px-5 py-4">Category</th><th className="px-5 py-4">Result</th><th className="px-5 py-4"></th></tr></thead><tbody>{rows.map(row => <tr key={row.id} className="border-b border-slate-100 last:border-0 hover:bg-teal-50/40"><td className="max-w-44 truncate px-5 py-4 text-slate-600">{row.sender}</td><td className="max-w-md px-5 py-4 font-medium text-slate-800"><span className="block truncate">{row.subject}</span><span className="mt-1 text-xs text-slate-400">{row.id}{row.source === "live_inbox" && " · LIVE"}</span></td><td className="px-5 py-4"><Badge value={row.category}/></td><td className="px-5 py-4">{row.comparison ? <Badge value={row.comparison.status}/> : <span className="text-slate-400">—</span>}</td><td className="px-5 py-4 text-right"><Link href={`/report/${row.id}`} className="font-medium text-[#0f6b66] hover:underline">Open report</Link></td></tr>)}</tbody></table></div></section>;
 }
