@@ -8,17 +8,26 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "tools:build": "tsc -p tsconfig.tools.json",
-    "test": "npm run tools:build && node --test .clearport-tools/tests/ingest.test.js",
+    "test": "npm run tools:build && node --test .clearport-tools/tests/ingest.test.js .clearport-tools/tests/classify.test.js",
     "seed": "npm run tools:build && node .clearport-tools/scripts/seed.js",
     "seed:check": "npm run seed -- --dry-run",
-    "seed:verify": "npm run seed -- --verify-only"
+    "seed:verify": "npm run seed -- --verify-only",
+    "classify": "npm run tools:build && node .clearport-tools/scripts/classify.js",
+    "classify:check": "npm run classify -- --dry-run",
+    "classify:retry": "npm run classify -- --retry-failures",
+    "compare": "npm run tools:build && node .clearport-tools/scripts/process-comparisons.js"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
     "@supabase/supabase-js": "2.116.0",
+    "lucide-react": "^1.47.0",
+    "mammoth": "^1.12.3",
     "next": "16.3.5",
+    "pdf-parse": "^2.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "recharts": "^3.10.1",
+    "xlsx": "^0.18.5",
     "zod": "4.6.5"
   },
   "devDependencies": {
