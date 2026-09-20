@@ -7,7 +7,6 @@ node_modules
 .venv
 __pycache__
 *.pyc
-.streamlit
 comparison_result.json
 submission.json
 run_cache.json

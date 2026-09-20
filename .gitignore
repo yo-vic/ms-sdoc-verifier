@@ -1,6 +1,10 @@
 .venv/
 .env
-.streamlit/secrets.toml
+.env.local
+.env*.local
+backend/.env.*
+backend/.venv
+frontend/.env.*
 __pycache__/
 comparison_result.json
 submission.json
