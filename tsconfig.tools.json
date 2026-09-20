@@ -4,5 +4,5 @@
     "outDir": ".clearport-tools", "rootDir": ".", "strict": true,
     "esModuleInterop": true, "skipLibCheck": true, "types": ["node"]
   },
-  "include": ["lib/ingest/**/*.ts", "lib/supabase/admin.ts", "scripts/seed.ts", "tests/ingest.test.ts"]
+  "include": ["lib/ingest/**/*.ts", "lib/pipeline/**/*.ts", "lib/supabase/admin.ts", "scripts/seed.ts", "scripts/classify.ts", "scripts/process-comparisons.ts", "tests/ingest.test.ts", "tests/classify.test.ts"]
 }
