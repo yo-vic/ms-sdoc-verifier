@@ -51,37 +51,36 @@ npm run build
 ## Challenges Faced
 
 1.  **Heterogeneous & Unstructured Document Formats**
-    
-    *   _Challenge:_ Shipping documents arrive in multi-format variations (.pdf, .docx, .xlsx, .txt) with inconsistent layouts, missing headers, or varying table structures.
-        
-    *   _Solution:_ Built modular format-specific parsers wrapped in standardized text-cleaning layers that normalize documents into clean text strings prior to extraction.
-        
+
+    - _Challenge:_ Shipping documents arrive in multi-format variations (.pdf, .docx, .xlsx, .txt) with inconsistent layouts, missing headers, or varying table structures.
+
+    - _Solution:_ Built modular format-specific parsers wrapped in standardized text-cleaning layers that normalize documents into clean text strings prior to extraction.
+
 2.  **Noise and False Positives in Field Matching**
-    
-    *   _Challenge:_ Trivial formatting discrepancies—such as string case ("CONTAINER #123" vs "Container 123"), company suffix variations ("LLC" vs "Limited"), or differing weight units—frequently triggered false-positive mismatches.
-        
-    *   _Solution:_ Implemented a deterministic field normalization engine (lib/pipeline/normalize.ts) that standardizes legal entity names, strips punctuation noise, resolves port codes, and converts weights (e.g., lbs to kg) before evaluating field equality.
-        
+
+    - _Challenge:_ Trivial formatting discrepancies—such as string case ("CONTAINER #123" vs "Container 123"), company suffix variations ("LLC" vs "Limited"), or differing weight units—frequently triggered false-positive mismatches.
+
+    - _Solution:_ Implemented a deterministic field normalization engine (lib/pipeline/normalize.ts) that standardizes legal entity names, strips punctuation noise, resolves port codes, and converts weights (e.g., lbs to kg) before evaluating field equality.
+
 3.  **Latency, Rate Limits, and LLM Cost Boundaries**
-    
-    *   _Challenge:_ Routing every email through Large Language Models introduced execution latency, potential API rate-limiting issues, and unnecessary API costs.
-        
-    *   _Solution:_ Designed a rule-first hybrid architecture. Fast keyword/regex logic handles standard structured messages instantaneously at zero cost, reserving Gemini API calls strictly for ambiguous edge cases.
-        
+
+    - _Challenge:_ Routing every email through Large Language Models introduced execution latency, potential API rate-limiting issues, and unnecessary API costs.
+
+    - _Solution:_ Designed a rule-first hybrid architecture. Fast keyword/regex logic handles standard structured messages instantaneously at zero cost, reserving Gemini API calls strictly for ambiguous edge cases.
 
 ## Future Potential & Roadmap
 
-*   **Optical Character Recognition (OCR) Engine Integration**
-    
-    *   Expand document ingestion pipelines with OCR engines (e.g., Tesseract / Vision AI) to extract structured fields from scanned image-only PDFs and physical paper document photos.
-        
-*   **Enterprise ERP & Port Authority Connectors**
-    
-    *   Integrate directly with logistics platforms and port gateways (such as CargoWise or SAP) via webhook endpoints to trigger automated customs approvals upon zero-mismatch verification.
-        
-*   **Multilingual Support**
-    
-    *   Extend string normalization and field-parsing rules to support multi-language global shipping documentation (e.g., Mandarin and Malay).
+- **Optical Character Recognition (OCR) Engine Integration**
+
+  - Expand document ingestion pipelines with OCR engines (e.g., Tesseract / Vision AI) to extract structured fields from scanned image-only PDFs and physical paper document photos.
+
+- **Enterprise ERP & Port Authority Connectors**
+
+  - Integrate directly with logistics platforms and port gateways (such as CargoWise or SAP) via webhook endpoints to trigger automated customs approvals upon zero-mismatch verification.
+
+- **Multilingual Support**
+
+  - Extend string normalization and field-parsing rules to support multi-language global shipping documentation (e.g., Mandarin and Malay).
 
 ## Documentation Index
 

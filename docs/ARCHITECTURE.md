@@ -125,6 +125,7 @@ class node_gemini,node_live_sender,node_dataset_operator toneIndigo
 ## Data flow
 
 **Dataset path** (used to populate and demonstrate the system against the provided dataset):
+
 ```
 inbox/ + attachments/ (local)
 → npm run seed → Supabase (emails, attachments, Storage)
@@ -134,6 +135,7 @@ inbox/ + attachments/ (local)
 ```
 
 **Live path** (for a real inbound email, via `/api/inbound-email`):
+
 ```
 Email webhook → POST /api/inbound-email
 → classify() (same logic as the batch pipeline)
@@ -145,13 +147,13 @@ Email webhook → POST /api/inbound-email
 
 Five tables in `supabase/migrations/202609190001_clearport.sql`:
 
-| Table | Holds |
-|---|---|
-| `emails` | Content, source (`dataset`/`live_inbox`), classification + confidence |
-| `attachments` | Filenames, detected doc type, Storage path, content hash, ingest state |
+| Table              | Holds                                                                             |
+| ------------------ | --------------------------------------------------------------------------------- |
+| `emails`           | Content, source (`dataset`/`live_inbox`), classification + confidence             |
+| `attachments`      | Filenames, detected doc type, Storage path, content hash, ingest state            |
 | `extracted_fields` | Per-field extracted value, normalized value, and evidence (snippet + line number) |
-| `comparisons` | Final status, review reason, mismatched fields, human review state |
-| `audit_log` | Every system and human action, for a defensible decision trail |
+| `comparisons`      | Final status, review reason, mismatched fields, human review state                |
+| `audit_log`        | Every system and human action, for a defensible decision trail                    |
 
 ## Security
 

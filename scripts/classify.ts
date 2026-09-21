@@ -89,14 +89,12 @@ async function main() {
       };
       llmFallbacks++;
       if (fallbackSamples.length < 3) fallbackSamples.push(detail.message);
-      const audit = await db
-        .from("audit_log")
-        .insert({
-          email_id: email.email_id,
-          actor: "system",
-          action: "classification_fallback_invalid",
-          detail,
-        });
+      const audit = await db.from("audit_log").insert({
+        email_id: email.email_id,
+        actor: "system",
+        action: "classification_fallback_invalid",
+        detail,
+      });
       if (audit.error)
         throw new Error(
           `Write classification fallback audit: ${audit.error.message}`,
@@ -112,14 +110,12 @@ async function main() {
       .eq("id", email.email_id);
     if (update.error)
       throw new Error(`Update ${email.email_id}: ${update.error.message}`);
-    const audit = await db
-      .from("audit_log")
-      .insert({
-        email_id: email.email_id,
-        actor: "system",
-        action: "classified",
-        detail: { ...result },
-      });
+    const audit = await db.from("audit_log").insert({
+      email_id: email.email_id,
+      actor: "system",
+      action: "classified",
+      detail: { ...result },
+    });
     if (audit.error)
       throw new Error(`Write classification audit: ${audit.error.message}`);
     counts.set(result.category, (counts.get(result.category) ?? 0) + 1);

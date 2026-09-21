@@ -3,4 +3,104 @@ import { emailDetail } from "@/lib/server-data";
 import { Badge } from "@/components/status";
 import { scoredFields } from "@/lib/pipeline/types";
 export const dynamic = "force-dynamic";
-export default async function Report({ params }: { params: Promise<{emailId:string}> }) { const {emailId}=await params; const data=await emailDetail(emailId); const si=data.attachments.find(a=>a.doc_type==="SI"); const bl=data.attachments.find(a=>a.doc_type==="BL"); const mismatch=new Set((data.comparison?.mismatched_fields as Array<{field:string}> ?? []).map(x=>x.field)); const value=(id:string|undefined,field:string)=>data.fields.find(x=>x.attachment_id===id&&x.field_name===field)?.raw_value??"Missing"; return <section className="p-8"><Link href="/inbox" className="text-sm font-medium text-[#0f6b66]">← Back to inbox</Link><div className="mt-5 flex items-start justify-between"><div><p className="text-sm text-slate-500">{data.email.id} · {data.email.sender}</p><h1 className="mt-1 text-2xl font-semibold">{data.email.subject}</h1></div><div className="flex gap-2"><Badge value={data.email.category}/>{data.comparison&&<Badge value={data.comparison.status}/>}</div></div>{data.comparison?.status==="NEEDS_REVIEW"&&<div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">This case needs review: <b>{data.comparison.review_reason?.replaceAll("_"," ")}</b>. The pipeline retained all readable evidence below.</div>}<div className="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white"><table className="w-full text-sm"><thead className="bg-slate-50 text-left text-xs uppercase text-slate-500"><tr><th className="p-4">Field</th><th className="p-4">Shipping instruction</th><th className="p-4">Draft bill of lading</th></tr></thead><tbody>{scoredFields.map(field=><tr key={field} className={mismatch.has(field)?"border-l-4 border-rose-500 bg-rose-50":"border-t border-slate-100"}><td className="p-4 font-semibold">{field.replaceAll("_"," ")}</td><td className="p-4">{value(si?.id,field)}</td><td className="p-4">{value(bl?.id,field)}</td></tr>)}</tbody></table></div><details className="mt-6 rounded-xl border border-slate-200 bg-white p-5"><summary className="cursor-pointer font-semibold">Original email message</summary><pre className="mt-4 whitespace-pre-wrap text-sm text-slate-600">{data.email.body}</pre></details><div className="mt-6 grid gap-5 lg:grid-cols-2">{data.attachments.map(a=><article key={a.id} className="overflow-hidden rounded-xl border border-slate-200 bg-white"><header className="flex items-center justify-between border-b p-4"><b>{a.doc_type} · {a.filename}</b><span className="text-xs text-slate-500">{a.read_method ?? "unreadable"}</span></header><pre className="max-h-96 overflow-auto p-4 text-xs leading-6 text-slate-600">{a.raw_text||"Could not render preview"}</pre></article>)}</div></section>; }
+export default async function Report({
+  params,
+}: {
+  params: Promise<{ emailId: string }>;
+}) {
+  const { emailId } = await params;
+  const data = await emailDetail(emailId);
+  const si = data.attachments.find((a) => a.doc_type === "SI");
+  const bl = data.attachments.find((a) => a.doc_type === "BL");
+  const mismatch = new Set(
+    (
+      (data.comparison?.mismatched_fields as Array<{ field: string }>) ?? []
+    ).map((x) => x.field),
+  );
+  const value = (id: string | undefined, field: string) =>
+    data.fields.find((x) => x.attachment_id === id && x.field_name === field)
+      ?.raw_value ?? "Missing";
+  return (
+    <section className="p-8">
+      <Link href="/inbox" className="text-sm font-medium text-[#0f6b66]">
+        ← Back to inbox
+      </Link>
+      <div className="mt-5 flex items-start justify-between">
+        <div>
+          <p className="text-sm text-slate-500">
+            {data.email.id} · {data.email.sender}
+          </p>
+          <h1 className="mt-1 text-2xl font-semibold">{data.email.subject}</h1>
+        </div>
+        <div className="flex gap-2">
+          <Badge value={data.email.category} />
+          {data.comparison && <Badge value={data.comparison.status} />}
+        </div>
+      </div>
+      {data.comparison?.status === "NEEDS_REVIEW" && (
+        <div className="mt-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-amber-900">
+          This case needs review:{" "}
+          <b>{data.comparison.review_reason?.replaceAll("_", " ")}</b>. The
+          pipeline retained all readable evidence below.
+        </div>
+      )}
+      <div className="mt-7 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <table className="w-full text-sm">
+          <thead className="bg-slate-50 text-left text-xs uppercase text-slate-500">
+            <tr>
+              <th className="p-4">Field</th>
+              <th className="p-4">Shipping instruction</th>
+              <th className="p-4">Draft bill of lading</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scoredFields.map((field) => (
+              <tr
+                key={field}
+                className={
+                  mismatch.has(field)
+                    ? "border-l-4 border-rose-500 bg-rose-50"
+                    : "border-t border-slate-100"
+                }
+              >
+                <td className="p-4 font-semibold">
+                  {field.replaceAll("_", " ")}
+                </td>
+                <td className="p-4">{value(si?.id, field)}</td>
+                <td className="p-4">{value(bl?.id, field)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <details className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+        <summary className="cursor-pointer font-semibold">
+          Original email message
+        </summary>
+        <pre className="mt-4 whitespace-pre-wrap text-sm text-slate-600">
+          {data.email.body}
+        </pre>
+      </details>
+      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        {data.attachments.map((a) => (
+          <article
+            key={a.id}
+            className="overflow-hidden rounded-xl border border-slate-200 bg-white"
+          >
+            <header className="flex items-center justify-between border-b p-4">
+              <b>
+                {a.doc_type} · {a.filename}
+              </b>
+              <span className="text-xs text-slate-500">
+                {a.read_method ?? "unreadable"}
+              </span>
+            </header>
+            <pre className="max-h-96 overflow-auto p-4 text-xs leading-6 text-slate-600">
+              {a.raw_text || "Could not render preview"}
+            </pre>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}

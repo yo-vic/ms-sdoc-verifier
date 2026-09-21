@@ -31,8 +31,9 @@ Every result — and every field extracted along the way, with its source eviden
 Accessible directly via the `/admin` portal, the export endpoint queries the `emails` and `comparisons` tables to generate the official `submission.json` artifact required for self-evaluation.
 
 For each processed `email_id`, the generated JSON schema includes:
-* `category` — Email classification result
-* `status` — Comparison outcome (`OK`, `MISMATCH`, or `NEEDS_REVIEW`)
-* `review_reason` — Trigger flag if escalated for human review
-* `has_defect` — Boolean flag indicating a discrepancy or document error
-* `defect_fields` — List of non-matching or unreadable target fields
+
+- `category` — Email classification result
+- `status` — Comparison outcome (`OK`, `MISMATCH`, or `NEEDS_REVIEW`)
+- `review_reason` — Trigger flag if escalated for human review
+- `has_defect` — Boolean flag indicating a discrepancy or document error
+- `defect_fields` — List of non-matching or unreadable target fields

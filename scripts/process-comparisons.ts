@@ -93,30 +93,26 @@ async function main() {
           ? "wrong_doc_type"
           : "missing_attachment";
     const result = compareFields(si?.fields ?? [], bl?.fields ?? [], reason);
-    const write = await db
-      .from("comparisons")
-      .upsert(
-        {
-          email_id: emailId,
-          status: result.status,
-          review_reason: result.reviewReason,
-          mismatched_fields: result.mismatches,
-        },
-        { onConflict: "email_id" },
-      );
-    if (write.error) throw new Error(write.error.message);
-    const audit = await db
-      .from("audit_log")
-      .insert({
+    const write = await db.from("comparisons").upsert(
+      {
         email_id: emailId,
-        actor: "system",
-        action: "comparison_processed",
-        detail: {
-          status: result.status,
-          review_reason: result.reviewReason,
-          mismatches: result.mismatches,
-        },
-      });
+        status: result.status,
+        review_reason: result.reviewReason,
+        mismatched_fields: result.mismatches,
+      },
+      { onConflict: "email_id" },
+    );
+    if (write.error) throw new Error(write.error.message);
+    const audit = await db.from("audit_log").insert({
+      email_id: emailId,
+      actor: "system",
+      action: "comparison_processed",
+      detail: {
+        status: result.status,
+        review_reason: result.reviewReason,
+        mismatches: result.mismatches,
+      },
+    });
     if (audit.error) throw new Error(audit.error.message);
     if (index === 0 || (index + 1) % 10 === 0 || index + 1 === emails.length)
       console.log(`Processed ${index + 1}/${emails.length}`);

@@ -1,8 +1,23 @@
 {
   "compilerOptions": {
-    "target": "ES2022", "module": "Node16", "moduleResolution": "Node16",
-    "outDir": ".clearport-tools", "rootDir": ".", "strict": true,
-    "esModuleInterop": true, "skipLibCheck": true, "types": ["node"]
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": ".clearport-tools",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"]
   },
-  "include": ["lib/ingest/**/*.ts", "lib/pipeline/**/*.ts", "lib/supabase/admin.ts", "scripts/seed.ts", "scripts/classify.ts", "scripts/process-comparisons.ts", "tests/ingest.test.ts", "tests/classify.test.ts"]
+  "include": [
+    "lib/ingest/**/*.ts",
+    "lib/pipeline/**/*.ts",
+    "lib/supabase/admin.ts",
+    "scripts/seed.ts",
+    "scripts/classify.ts",
+    "scripts/process-comparisons.ts",
+    "tests/ingest.test.ts",
+    "tests/classify.test.ts"
+  ]
 }

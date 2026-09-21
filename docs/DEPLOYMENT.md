@@ -28,9 +28,10 @@ GEMINI_MODEL
 
 ## Containerized Deployment (Optional)
 
-For container-based environments (such as GCP Cloud Run, AWS ECS, or Render), Next.js natively supports a standalone build target. 
+For container-based environments (such as GCP Cloud Run, AWS ECS, or Render), Next.js natively supports a standalone build target.
 
 To build a minimal Docker container:
+
 1. Add `output: "standalone"` to `next.config.js`.
 2. Build the production output via `npm run build`.
 3. Package the standalone bundle into a lightweight Node.js Docker container.

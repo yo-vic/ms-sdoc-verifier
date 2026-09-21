@@ -86,14 +86,12 @@ export class SupabaseIngestStore implements IngestStore {
   async audit(emailId: string, detail: Record<string, unknown>) {
     check(
       (
-        await this.db
-          .from("audit_log")
-          .insert({
-            email_id: emailId,
-            actor: "system",
-            action: "dataset_ingested",
-            detail,
-          })
+        await this.db.from("audit_log").insert({
+          email_id: emailId,
+          actor: "system",
+          action: "dataset_ingested",
+          detail,
+        })
       ).error,
       "Write ingestion audit",
     );

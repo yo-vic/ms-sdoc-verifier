@@ -22,13 +22,13 @@ npm run classify:check
 
 The dry run made no Gemini calls and found this initial rule distribution across 520 messages:
 
-| Category | Count |
-| --- | ---: |
-| BL_COMPARISON | 119 |
-| SI_REQUEST | 125 |
-| INVOICE_QUERY | 72 |
-| GENERAL | 188 |
-| SPAM | 16 |
+| Category      | Count |
+| ------------- | ----: |
+| BL_COMPARISON |   119 |
+| SI_REQUEST    |   125 |
+| INVOICE_QUERY |    72 |
+| GENERAL       |   188 |
+| SPAM          |    16 |
 
 188 low-confidence general messages would be sent to Gemini during the live run. The script stays below Gemini Flash Lite's free 15-requests-per-minute allowance, so this fallback work can take roughly 14 minutes. I manually checked 20 source emails: four representative examples from each of the five categories. The check included the cleaned newest message and attachment names. A rule was corrected during this check so that a shipping instruction's ordinary "original invoice" document-list entry does not become an invoice query.
 

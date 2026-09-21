@@ -14,13 +14,11 @@ export async function POST(request: Request) {
     .eq("email_id", body.emailId);
   if (update.error)
     return Response.json({ error: update.error.message }, { status: 500 });
-  await db
-    .from("audit_log")
-    .insert({
-      email_id: body.emailId,
-      actor: "human",
-      action: "review_confirmed",
-      detail: { note: body.note ?? null },
-    });
+  await db.from("audit_log").insert({
+    email_id: body.emailId,
+    actor: "human",
+    action: "review_confirmed",
+    detail: { note: body.note ?? null },
+  });
   return Response.json({ ok: true });
 }

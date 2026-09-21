@@ -20,18 +20,16 @@ export async function POST(request: Request) {
     body: payload.TextBody ?? "",
     attachmentFilenames: names,
   });
-  const email = await db
-    .from("emails")
-    .upsert({
-      id,
-      sender: payload.From ?? "unknown",
-      subject: payload.Subject ?? "(no subject)",
-      body: payload.TextBody ?? "",
-      source: "live_inbox",
-      category: result.category,
-      category_confidence: result.confidence,
-      category_decided_by: result.decidedBy,
-    });
+  const email = await db.from("emails").upsert({
+    id,
+    sender: payload.From ?? "unknown",
+    subject: payload.Subject ?? "(no subject)",
+    body: payload.TextBody ?? "",
+    source: "live_inbox",
+    category: result.category,
+    category_confidence: result.confidence,
+    category_decided_by: result.decidedBy,
+  });
   if (email.error)
     return Response.json({ error: email.error.message }, { status: 500 });
   for (const a of payload.Attachments ?? []) {
@@ -46,27 +44,23 @@ export async function POST(request: Request) {
       });
     if (upload.error)
       return Response.json({ error: upload.error.message }, { status: 500 });
-    await db
-      .from("attachments")
-      .insert({
-        id: attachmentId,
-        email_id: id,
-        filename: a.Name || "attachment",
-        doc_type: "unknown",
-        storage_path: storagePath,
-        source_path: `inbound/${a.Name || "attachment"}`,
-        content_sha256: createHash("sha256").update(bytes).digest("hex"),
-        byte_size: bytes.length,
-        ingest_state: "stored",
-      });
-  }
-  await db
-    .from("audit_log")
-    .insert({
+    await db.from("attachments").insert({
+      id: attachmentId,
       email_id: id,
-      actor: "system",
-      action: "live_email_received",
-      detail: { attachment_count: names.length },
+      filename: a.Name || "attachment",
+      doc_type: "unknown",
+      storage_path: storagePath,
+      source_path: `inbound/${a.Name || "attachment"}`,
+      content_sha256: createHash("sha256").update(bytes).digest("hex"),
+      byte_size: bytes.length,
+      ingest_state: "stored",
     });
+  }
+  await db.from("audit_log").insert({
+    email_id: id,
+    actor: "system",
+    action: "live_email_received",
+    detail: { attachment_count: names.length },
+  });
   return Response.json({ ok: true, id, category: result.category });
 }
