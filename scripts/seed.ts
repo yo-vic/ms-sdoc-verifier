@@ -22,11 +22,28 @@ async function main() {
     return;
   }
   const db = createAdminClient();
+  const total = (await inbox.emails()).length;
+  const report = (stage: string, done: number, count: number) => {
+    if (done === 1 || done % 10 === 0 || done === count) console.log(`${stage}: ${done}/${count} emails`);
+  };
   if (!values["verify-only"]) {
-    const result = await ingestDataset(inbox, new SupabaseIngestStore(db));
+    console.log(`Starting import of ${total} emails. Progress prints every 10 emails; requests time out after 5 minutes.`);
+    const store = new SupabaseIngestStore(db);
+    let imported = 0;
+    const reportingStore: IngestStore = {
+      email: row => store.email(row),
+      attachment: (row, bytes) => store.attachment(row, bytes),
+      async audit(emailId, detail) {
+        await store.audit(emailId, detail);
+        report("Imported", ++imported, total);
+      },
+    };
+    const result = await ingestDataset(inbox, reportingStore);
     console.log(`Imported ${result.emailCount} emails and ${result.attachmentCount} attachment references.`);
   }
-  console.log(JSON.stringify({ mode: "cloud-verification", ...await verifySupabaseSeed(db, inbox) }, null, 2));
+  console.log("Verifying database rows and downloading attachments to check their hashes...");
+  console.log(JSON.stringify({ mode: "cloud-verification", ...await verifySupabaseSeed(db, inbox,
+    (done, count) => report("Verified", done, count)) }, null, 2));
 }
 
 main().catch(error => { console.error(error instanceof Error ? error.message : "Seed failed."); process.exitCode = 1; });

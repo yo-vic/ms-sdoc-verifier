@@ -23,10 +23,13 @@ export class SupabaseIngestStore implements IngestStore {
     if (existing.data?.ingest_state === "stored" && existing.data.content_sha256 !== row.content_sha256) {
       throw new Error(`Attachment content changed for ${row.email_id}/${row.filename}. Existing evidence was preserved.`);
     }
+    // A failed run may be restarted. Do not re-upload an object whose recorded
+    // content hash is already identical; verification will still download it.
+    if (existing.data?.ingest_state === "stored" && existing.data.content_sha256 === row.content_sha256) return;
     if (bytes !== null) {
       const contentType = mime[row.filename.split(".").pop()!.toLowerCase()] ?? "application/octet-stream";
       const result = await this.db.storage.from(BUCKET).upload(row.storage_path, bytes, { contentType, upsert: true });
-      check(result.error, "Upload attachment");
+      check(result.error, `Upload attachment ${row.email_id}/${row.filename}`);
     }
     // No parsing or filename-based document type assumptions during ingestion.
     check((await this.db.from("attachments").upsert(row, { onConflict: "id" })).error, "Upsert attachment");
@@ -36,12 +39,13 @@ export class SupabaseIngestStore implements IngestStore {
   }
 }
 
-export async function verifySupabaseSeed(db: SupabaseClient, inbox: DatasetInbox) {
+export async function verifySupabaseSeed(db: SupabaseClient, inbox: DatasetInbox, progress?: (done: number, total: number) => void) {
   const emails = await inbox.emails();
   const count = await db.from("emails").select("id", { count: "exact", head: true }).eq("source", "dataset");
   check(count.error, "Count dataset emails");
   if (count.count !== emails.length) throw new Error(`Email count mismatch: expected ${emails.length}, found ${count.count}.`);
   let verifiedAttachments = 0, missingAttachments = 0;
+  let verifiedEmails = 0;
   for (const email of emails) {
     const result = await db.from("emails").select("id").eq("id", email.email_id).single();
     check(result.error, "Verify email ID");
@@ -65,6 +69,7 @@ export async function verifySupabaseSeed(db: SupabaseClient, inbox: DatasetInbox
       if (sha256(new Uint8Array(await object.data!.arrayBuffer())) !== sha256(source)) throw new Error(`Stored bytes differ: ${sourcePath}`);
       verifiedAttachments++;
     }
+    progress?.(++verifiedEmails, emails.length);
   }
   return { emails: emails.length, attachmentReferences: verifiedAttachments, missingSourceFiles: missingAttachments, storageHashesVerified: verifiedAttachments - missingAttachments };
 }

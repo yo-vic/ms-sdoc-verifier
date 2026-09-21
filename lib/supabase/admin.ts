@@ -8,6 +8,14 @@ export function createAdminClient() {
     throw new Error("Configure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local first.");
   }
   return createClient(url, key, {
+    global: {
+      fetch: (input, init) => fetch(input, {
+        ...init,
+        signal: init?.signal
+          ? AbortSignal.any([init.signal, AbortSignal.timeout(300_000)])
+          : AbortSignal.timeout(300_000),
+      }),
+    },
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   });
 }

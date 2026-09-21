@@ -1,63 +1,61 @@
-# SDOC Hackathon — participant bundle
+# ClearPort
 
-Build a pipeline that reads this inbox and, for each email, decides:
+ClearPort is a shipping-document verification workspace for the Averis x Monash Hackathon. It classifies incoming shipping emails, extracts SI and Bill of Lading values, and flags document mismatches for review.
 
-1. **category** — one of `BL_COMPARISON`, `SI_REQUEST`, `INVOICE_QUERY`,
-   `GENERAL`, `SPAM`.
-2. for `BL_COMPARISON` emails, compare the **Shipping Instruction (SI)** against
-   the **draft Bill of Lading (BL)** attachments and report the outcome:
-   - `status`: `OK` (all 7 fields match), `MISMATCH` (≥1 field differs), or
-     `NEEDS_REVIEW` (you cannot decide — unreadable/missing/wrong document).
-   - `has_defect` + `defect_fields` when it's a `MISMATCH`.
-   - `review_reason` when it's `NEEDS_REVIEW`
-     (`wrong_doc_type` | `missing_attachment` | `unreadable` | `missing_value`).
+## Architecture
 
-The 7 compared fields: **shipper, consignee, notify_party, port_of_loading,
-port_of_discharge, container_count, gross_weight_kg**. Note the SI and BL often
-*label the same field differently* (`Port of Loading` vs `Load Port`) — align by
-meaning, not by header text.
+- **Next.js** provides the web interface and server-side API routes.
+- **Supabase** stores email records, comparison results, audit events, and source documents.
+- **Gemini** provides the low-confidence classification fallback.
 
-## Quick start
+The browser only receives the UI. Database access, document processing, and API keys remain on the server.
+
+## Local setup
+
+1. Install Node.js 22 or later.
+2. Copy `.env.example` to `.env.local` and enter the Supabase and Gemini values.
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the app:
+
+   ```bash
+   npm run dev
+   ```
+
+Open `http://localhost:3000`.
+
+## Dataset processing
+
+The source dataset remains in `inbox/` and `attachments/`. It is used locally to upload source documents into Supabase Storage; it is not shipped to the browser.
 
 ```bash
-# look at one email + its documents
-cat inbox/email_004.json
-cat attachments/email_004_SI.txt
-cat attachments/email_004_BL.txt
-
-# or use the loader (stdlib only for the .txt path)
-python3 -c "from loader import Inbox; ib=Inbox('.'); print(len(ib.emails()),'emails')"
+npm run seed              # Upload emails and attachments to Supabase
+npm run classify          # Classify dataset emails
+npm run compare           # Extract and compare SI/BL document pairs
 ```
 
-```python
-from loader import Inbox
-inbox = Inbox(".")                     # this folder  (or a server URL)
-submission = {}
-for email in inbox:
-    eid = email["email_id"]
-    # ... your classify + extract + compare pipeline ...
-    submission[eid] = {
-        "category": "BL_COMPARISON",
-        "status": "MISMATCH",
-        "review_reason": None,
-        "has_defect": True,
-        "defect_fields": ["consignee"],
-    }
-import json; json.dump(submission, open("submission.json", "w"), indent=2)
+Useful checks:
+
+```bash
+npm run test
+npm run typecheck
+npm run build
 ```
 
-Match **`sample_submission.json`** exactly (every email_id present).
+## Deploying to Vercel
 
-## Scoring
+Import the repository in Vercel and select the `feature/document-verification` branch. Add these environment variables in Vercel:
 
-You don't have the ground truth. Either:
-- the organizers run `score_cli.py submission.json` for you, **or**
-- if they gave you the HTTP server URL:
-  ```python
-  inbox = Inbox("http://<host>:8080")
-  print(inbox.submit(submission)["final_score"])
-  ```
+```text
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+SUPABASE_SERVICE_ROLE_KEY
+GEMINI_API_KEY
+GEMINI_MODEL
+```
 
-Final score = 50% end-to-end (defects caught all the way through) + 30% Stage-1
-macro-F1 + 20% Stage-3 defect-F1. `NEEDS_REVIEW` handling is reported as a
-separate reliability axis.
+`SUPABASE_SERVICE_ROLE_KEY` and `GEMINI_API_KEY` are server-only secrets. Never give either a `NEXT_PUBLIC_` prefix.
