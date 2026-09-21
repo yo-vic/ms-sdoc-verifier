@@ -1,14 +1,35 @@
 import { normalize } from "./normalize";
 import type { ExtractedValue, ReviewReason, ScoredField } from "./types";
 import { scoredFields } from "./types";
-export function compareFields(si: ExtractedValue[], bl: ExtractedValue[], reason?: ReviewReason) {
-  if (reason) return { status: "NEEDS_REVIEW" as const, reviewReason: reason, mismatches: [] as unknown[] };
-  const mismatches: Array<{ field: ScoredField; si_value: string | null; bl_value: string | null }> = [];
+export function compareFields(
+  si: ExtractedValue[],
+  bl: ExtractedValue[],
+  reason?: ReviewReason,
+) {
+  if (reason)
+    return {
+      status: "NEEDS_REVIEW" as const,
+      reviewReason: reason,
+      mismatches: [] as unknown[],
+    };
+  const mismatches: Array<{
+    field: ScoredField;
+    si_value: string | null;
+    bl_value: string | null;
+  }> = [];
   for (const field of scoredFields) {
-    const a = si.find(value => value.field === field)?.rawValue ?? null;
-    const b = bl.find(value => value.field === field)?.rawValue ?? null;
-    if (!a || !b) return { status: "NEEDS_REVIEW" as const, reviewReason: "missing_value" as const, mismatches: [] as unknown[] };
-    if (normalize(a, field) !== normalize(b, field)) mismatches.push({ field, si_value: a, bl_value: b });
+    const a = si.find((value) => value.field === field)?.rawValue ?? null;
+    const b = bl.find((value) => value.field === field)?.rawValue ?? null;
+    if (!a || !b)
+      return {
+        status: "NEEDS_REVIEW" as const,
+        reviewReason: "missing_value" as const,
+        mismatches: [] as unknown[],
+      };
+    if (normalize(a, field) !== normalize(b, field))
+      mismatches.push({ field, si_value: a, bl_value: b });
   }
-  return mismatches.length ? { status: "MISMATCH" as const, reviewReason: null, mismatches } : { status: "OK" as const, reviewReason: null, mismatches };
+  return mismatches.length
+    ? { status: "MISMATCH" as const, reviewReason: null, mismatches }
+    : { status: "OK" as const, reviewReason: null, mismatches };
 }
