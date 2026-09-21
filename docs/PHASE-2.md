@@ -1,3 +1,5 @@
+[← Back to README](../README.md)
+
 # ClearPort — Phase 2 classification
 
 Phase 2 adds rule-first classification to `lib/pipeline/classify.ts` and a database command in `scripts/classify.ts`.

@@ -1,3 +1,5 @@
+[← Back to README](../README.md)
+
 # ClearPort — Phase 1
 
 The existing Python prototype is preserved. Next.js is the new application at the repository root. Phase 1 does not call any AI provider. The approved provider for later phases is Gemini, not Anthropic; the project must remain zero-cost.
