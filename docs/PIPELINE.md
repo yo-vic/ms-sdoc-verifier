@@ -26,6 +26,13 @@ Processes every email classified `BL_COMPARISON`. For each: downloads its attach
 
 Every result — and every field extracted along the way, with its source evidence — is written to Supabase and immediately visible in the `/review` and `/report/[emailId]` pages.
 
-## Submission export
+## Submission export - `GET /api/export/submission`
 
-`GET /api/export/submission` (linked from `/admin`) reads `emails` and `comparisons` and produces `submission.json` in the exact shape required for organiser self-evaluation: `category`, `status`, `review_reason`, `has_defect`, `defect_fields` per `email_id`.
+Accessible directly via the `/admin` portal, the export endpoint queries the `emails` and `comparisons` tables to generate the official `submission.json` artifact required for self-evaluation.
+
+For each processed `email_id`, the generated JSON schema includes:
+* `category` — Email classification result
+* `status` — Comparison outcome (`OK`, `MISMATCH`, or `NEEDS_REVIEW`)
+* `review_reason` — Trigger flag if escalated for human review
+* `has_defect` — Boolean flag indicating a discrepancy or document error
+* `defect_fields` — List of non-matching or unreadable target fields

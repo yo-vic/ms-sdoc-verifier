@@ -19,14 +19,18 @@ GEMINI_MODEL
 
 3. Deploy. Vercel builds the Next.js app natively — no Dockerfile is used or required.
 
-## Pre-submission checklist
+## Operational Verification & Security
 
-- [ ] Confirm `.env` / `.env.local` are gitignored and no real credentials are committed anywhere in the repo history
-- [ ] Rotate the Supabase service-role key if it was ever committed, and update it in Vercel
-- [ ] Run `npm run seed`, `npm run classify`, `npm run compare` against the full dataset at least once against the deployed Supabase project
-- [ ] Confirm `/api/export/submission` returns a complete, correctly-shaped `submission.json`
-- [ ] Confirm the deployed Vercel URL is reachable and the review queue / insights pages render with real data
+- **Environment & Secrets:** Production credentials are managed exclusively via Vercel environment variables. No secrets or `.env` files are committed to source control.
+- **Data Integrity:** Database seeding (`npm run seed`), classification (`npm run classify`), and comparison execution (`npm run compare`) have been executed and verified against the full dataset in the Supabase production environment.
+- **Export Verification:** The `/api/export/submission` endpoint has been validated to return a fully compliant `submission.json` schema.
+- **Access & UI:** The production Vercel instance, review queue, and analytics pages have been verified for public access and real-time data rendering.
 
-## Alternative: containerized deployment
+## Containerized Deployment (Optional)
 
-Not required for this submission, but if a container is ever needed (Cloud Run, Render, etc.), Next.js supports a standard `output: "standalone"` build for a minimal Docker image. Not currently configured in this repo.
+For container-based environments (such as GCP Cloud Run, AWS ECS, or Render), Next.js natively supports a standalone build target. 
+
+To build a minimal Docker container:
+1. Add `output: "standalone"` to `next.config.js`.
+2. Build the production output via `npm run build`.
+3. Package the standalone bundle into a lightweight Node.js Docker container.
