@@ -2,6 +2,7 @@ import type { Line } from "./types";
 export type DocumentType = "SI" | "BL" | "unknown";
 export function detectDocumentType(lines: Line[]): DocumentType {
   const header = lines.slice(0, 20).map(line => line.text).join(" ").toLowerCase();
+  if (/\b(?:bill of lading|bl|b\/l)\s+instructions?\b|\[sheet:\s*s\.?\s*i\.?\]/.test(header)) return "SI";
   if (/\b(?:bill of lading|b\/l)\b/.test(header)) return "BL";
   if (/\b(?:shipping instruction|shipper.?s instruction|s\/i)\b/.test(header)) return "SI";
   const all = lines.map(line => line.text).join(" ").toLowerCase();
