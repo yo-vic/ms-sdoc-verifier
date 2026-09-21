@@ -2,6 +2,7 @@ import mammoth from "mammoth";
 import type { ParsedDocument } from "../types";
 const entities: Record<string, string> = { "&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": "\"", "&#39;": "'", "&nbsp;": " " };
 export async function parseDocx(bytes: Uint8Array): Promise<ParsedDocument> {
+<<<<<<< HEAD
   // HTML keeps paragraph/line breaks inside table cells; extractRawText glues them together ("FZE#813, ...").
   const result = await mammoth.convertToHtml({ buffer: Buffer.from(bytes) });
   const rawText = result.value
@@ -10,3 +11,16 @@ export async function parseDocx(bytes: Uint8Array): Promise<ParsedDocument> {
     .replace(/\r\n?/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").trim();
   return { rawText, lines: rawText.split("\n").map((text, index) => ({ number: index + 1, text })), readable: rawText.length > 0, method: "native" };
 }
+=======
+  const result = await mammoth.extractRawText({ buffer: Buffer.from(bytes) });
+  const rawText = result.value.replace(/\r\n?/g, "\n");
+  return {
+    rawText,
+    lines: rawText
+      .split("\n")
+      .map((text, index) => ({ number: index + 1, text })),
+    readable: rawText.trim().length > 0,
+    method: "native",
+  };
+}
+>>>>>>> 619e29eefdd6c4a92339803fbefdc19a9632f428

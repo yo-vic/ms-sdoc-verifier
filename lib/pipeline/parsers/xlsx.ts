@@ -6,8 +6,17 @@ export function parseXlsx(bytes: Uint8Array): ParsedDocument {
   for (const name of book.SheetNames) {
     rows.push(`[Sheet: ${name}]`);
     const sheet = book.Sheets[name];
-    for (const row of XLSX.utils.sheet_to_json<string[]>(sheet, { header: 1, defval: "" })) rows.push(row.map(String).join(" | "));
+    for (const row of XLSX.utils.sheet_to_json<string[]>(sheet, {
+      header: 1,
+      defval: "",
+    }))
+      rows.push(row.map(String).join(" | "));
   }
   const rawText = rows.join("\n");
-  return { rawText, lines: rows.map((text, index) => ({ number: index + 1, text })), readable: rawText.trim().length > 0, method: "native" };
+  return {
+    rawText,
+    lines: rows.map((text, index) => ({ number: index + 1, text })),
+    readable: rawText.trim().length > 0,
+    method: "native",
+  };
 }
