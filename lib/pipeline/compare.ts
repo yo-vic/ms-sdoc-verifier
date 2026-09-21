@@ -18,16 +18,6 @@ export function compareFields(
     bl_value: string | null;
   }> = [];
   for (const field of scoredFields) {
-<<<<<<< HEAD
-    const a = si.find(value => value.field === field)?.rawValue ?? null;
-    const b = bl.find(value => value.field === field)?.rawValue ?? null;
-    const na = a ? normalize(a, field) : null, nb = b ? normalize(b, field) : null;
-    if (!na || !nb) return { status: "NEEDS_REVIEW" as const, reviewReason: "missing_value" as const, mismatches: [] as unknown[] };
-    if (na !== nb) mismatches.push({ field, si_value: a, bl_value: b });
-  }
-  return mismatches.length ? { status: "MISMATCH" as const, reviewReason: null, mismatches } : { status: "OK" as const, reviewReason: null, mismatches };
-}
-=======
     const a = si.find((value) => value.field === field)?.rawValue ?? null;
     const b = bl.find((value) => value.field === field)?.rawValue ?? null;
     if (!a || !b)
@@ -43,4 +33,3 @@ export function compareFields(
     ? { status: "MISMATCH" as const, reviewReason: null, mismatches }
     : { status: "OK" as const, reviewReason: null, mismatches };
 }
->>>>>>> 619e29eefdd6c4a92339803fbefdc19a9632f428
